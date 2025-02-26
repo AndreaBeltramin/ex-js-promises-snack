@@ -42,11 +42,18 @@ const getPost = (id) => {
 	return new Promise((resolve, reject) => {
 		fetch(`https://dummyjson.com/posts/${id}`)
 			.then((response) => response.json())
-			.then((object) => resolve(object))
+			.then((post) => {
+				fetch(`https://dummyjson.com/users/${post.userId}`)
+					.then((res) => res.json())
+					.then((user) => {
+						resolve({ ...post, user });
+					})
+					.catch(reject);
+			})
 			.catch(reject);
 	});
 };
 
 getPost(1)
-	.then((object) => console.log(`Post ${object.id} : `, object))
+	.then((post) => console.log(`Post ${post.id} : `, post))
 	.catch((error) => console.error(error));
